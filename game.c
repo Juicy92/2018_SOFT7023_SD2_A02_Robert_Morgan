@@ -104,10 +104,17 @@ void display_board_content(game* g) {
 	//1. We print both (1) Indicative Indexes and (2) Actual Board Content 
 
 	//2. We print the flag of board content
+	printf("-------------\n");
+	printf("BOARD CONTENT\n");
+	printf("-------------\n");
+
 
 	//3. We create an auxiliary variable for indicative indexes
-
+	int index=0;
 	//4. We make a loop of 3 iterations
+	for (int i = 0; i <3 ; ++i) {
+		printf("|\n");
+	}
 	//On each iteration we first print some lines "------------"         "-------------"
 	//Then we print a row of (1) Indicative Indexes and (2) Actual Board Content
 }
@@ -117,6 +124,9 @@ void display_board_content(game* g) {
 //------------------------------------
 void display_game_status(game* g) {
 	//1. We clean the screen by printing 100 empty lines
+	for (int i = 0; i <100 ; ++i) {
+		printf("\n");
+	}
 
 	//2. We call to display_board_content to print both (1) Indicative Indexes and (2) Actual Board Content
 
