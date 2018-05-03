@@ -113,15 +113,20 @@ void display_board_content(game *g) {
     int index = 0;
     //4. We make a loop of 3 iterations
     for (int i = 0; i < 3; ++i) {
-        printf("|");
-
-        for (int j = 0; j < 3; ++j)
-            printf("\t---|");
 
 
+        printf("\t|");
 
-        for (int k = 0; k <3 ; ++k)
-            printf("\t\t---|");
+        for (int j = 0; j < 3; ++j) {
+            printf("---|");
+        }
+
+
+        printf("\t\t|");
+
+        for (int k = 0; k < 3; ++k)
+            printf("---|");
+
 
         printf("\n");
     }
@@ -142,13 +147,32 @@ void display_game_status(game *g) {
     display_board_content(g);
 
     //3. We print the flag of game status
+    printf("\t-------------\n");
+    printf("\tGAME STATUS\n");
+    printf("\t-------------\n");
 
     //4. We display the status
     // status = 1 --> Game is on. Player P1_name moves next.
+    if (g->status == 1) {
+        printf("Game is on. Player %s moves next.", g->p1);
+
+    }
     // status = 2 --> Game is on. Player P2_name moves next.
+    if (g->status == 2) {
+        printf("Game is on. Player %s moves next.", g->p2);
+    }
     // status = 3 --> Game is over. Player P1_name has won.
+    if (g->status == 3) {
+        printf("Game is over. Player %s has won.", g->p1);
+    }
     // status = 4 --> Game is over. Player P2_name has won.
+    if (g->status == 4) {
+        printf("Game is over. Player %s has won.", g->p2);
+    }
     // status = 5 --> Game is over. Draw.
+    if (g->status == 5) {
+        printf("Game is over. Draw.");
+    }
 }
 
 //--------------------------------------------------
@@ -200,16 +224,35 @@ boolean is_position_empty(game *g, int pos) {
     //1. We create the variable to be returned
     boolean res = False;
 
+
     //2. We check if the index is a valid one and if the board is empty at that index.
 
-    //If it is valid and free, we return True.
-    //Otherwise, we return False and write a warning message.
+    if ((pos >= 0) && (pos <= 8)) {
+        int row = pos / 3;
+        int col = pos % 3;
+
+        //If it is valid and free, we return True.
+        //Otherwise, we return False and write a warning message.
+
+        if(g->board[row][col]==' '){
+            res=True;
+        }
+        else{
+            res=False;
+            printf("This position is already used");
+        }
+
+    } else{
+        printf("That is not a valid choice");
+    }
+
+
 
     //3. We return res
     return res;
 }
 
-//---------------------------------------
+//---------------------------------------;
 //	07. FUNCTION user_get_movement_index 
 //---------------------------------------
 int user_get_movement_index(game *g) {
@@ -217,12 +260,22 @@ int user_get_movement_index(game *g) {
     int res = -1;
 
     //2. We create a boolean variable to control that we have received a valid movement index.
+    boolean valid=False;
 
     //3. We create a char variable to control the index we are receiving by keyboard.
+    char index=' ';
+
 
     //4. While we have not received a valid movement index.
     //We print a message asking for a new movement.
     //We call to my_get_char to get the index and we convert it to an integer.
+    while (valid==False){
+        printf("Please Eneter your movement 0-8");
+
+        my_get_char();
+
+    }
+
     //We call to is_position_empty to check that the index is a valid one.
 
     //5. We return res
