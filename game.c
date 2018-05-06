@@ -272,10 +272,13 @@ int user_get_movement_index(game *g) {
     while (valid==False){
         printf("Please Eneter your movement 0-8");
 
-        my_get_char();
 
+        res= (int)my_get_char();
+            if(is_position_empty(g,res)==True){
+                valid=True;
+            }
     }
-
+    return res;
     //We call to is_position_empty to check that the index is a valid one.
 
     //5. We return res
@@ -290,15 +293,30 @@ int computer_get_movement_index(game *g) {
     int res = -1;
 
     //2. We create a boolean variable to control that we have received a valid movement index.
-
+    boolean valid=False;
     //3. While we have not received a valid movement index.
+
     //If the machine is not intelligent we generate a random index to move for.
     //Otherwise we call to the function intelligent_selection to pick the best index to move for.
     //In both cases we call to is_position_empty to double check that the selected index is a valid one.
+    while(valid==False){
+        if(intelligent_selection(g)!=True)
+            res= gen_num(0,9);
+
+        else
+            res = intelligent_selection(g);
+        valid=True;
+
+        if(is_position_empty(g,res)==False)
+            valid=False;
+
+    }
 
     //4. We display a message of pressing a key to continue
+    printf("Press a key to continue");
 
     //5. We call to my_get_char() to wait for the user to press a key before continuing.
+    my_get_char();
 
     //6. We return res
     return res;
@@ -336,6 +354,7 @@ int is_there_a_winner(game *g) {
     //avenue 5 --> [2,5,8]
     //avenue 6 --> [0,4,8]
     //avenue 7 --> [2,4,6]
+
 
     //3. We return res
     return res;
@@ -394,10 +413,11 @@ void play_game(char *p1, char *p2, int im) {
     display_game_status(g);
     //2.2. We call to get_next_movement_index to force the human player or the computer
     //to select a valid index to move for.
+    get_next_movement_index(g);
     //2.3. We call to process_movement to update the board content and the Game Status.
-
+    process_movement(g,im);
     //3. Once the game is over we call to display_game_status to print the last Game Status of the game.
-
+    display_game_status(g);
 }
 
 //------------------------------------
