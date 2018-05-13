@@ -104,34 +104,36 @@ void display_board_content(game *g) {
     //1. We print both (1) Indicative Indexes and (2) Actual Board Content
 
     //2. We print the flag of board content
-    printf("-------------\n");
-    printf("BOARD CONTENT\n");
-    printf("-------------\n");
+    printf("\t-------------\n");
+    printf("\tBOARD CONTENT\n");
+    printf("\t-------------\n");
 
 
     //3. We create an auxiliary variable for indicative indexes
     int index = 0;
     //4. We make a loop of 3 iterations
-    for (int i = 0; i < 3; ++i) {
+    printf("|---|---|---|\t\t|---|---|---|\n");
+    for (int i = 0; i < 3; i++) {
+        printf("|");
 
 
-        printf("\t|");
+        for (int i = 0; i < 3; i++) {
+            printf(" %d |", index);
 
-        for (int j = 0; j < 3; ++j) {
-            printf("---|");
+
+            index++;
+
         }
-
-
         printf("\t\t|");
+        for (int j = 0; j < 3; j++)
 
-        for (int k = 0; k < 3; ++k)
-            printf("---|");
+            printf(" %c |", g->board[i][j]);
+        printf("\n|---|---|---|\t\t|---|---|---|\n");
 
 
-        printf("\n");
     }
-    //On each iteration we first print some lines "------------"         "-------------"
-    //Then we print a row of (1) Indicative Indexes and (2) Actual Board Content
+
+
 }
 
 //------------------------------------
@@ -227,24 +229,17 @@ boolean is_position_empty(game *g, int pos) {
 
     //2. We check if the index is a valid one and if the board is empty at that index.
 
-    if ((pos >= 0) && (pos <= 8)) {
-        int row = pos / 3;
-        int col = pos % 3;
 
-        //If it is valid and free, we return True.
-        //Otherwise, we return False and write a warning message.
+    int row = pos / 3;
+    int col = pos % 3;
 
-        if(g->board[row][col]==' '){
-            res=True;
-        }
-        else{
-            res=False;
-            printf("This position is already used");
-        }
+    //If it is valid and free, we return True.
+    //Otherwise, we return False and write a warning message.
 
-    } else{
-        printf("That is not a valid choice");
+    if (g->board[row][col] == ' ') {
+        res = True;
     }
+
 
 
 
@@ -260,29 +255,29 @@ int user_get_movement_index(game *g) {
     int res = -1;
 
     //2. We create a boolean variable to control that we have received a valid movement index.
-    boolean valid=False;
+    boolean valid = False;
 
     //3. We create a char variable to control the index we are receiving by keyboard.
-    char index=' ';
+
 
 
     //4. While we have not received a valid movement index.
     //We print a message asking for a new movement.
     //We call to my_get_char to get the index and we convert it to an integer.
-    while (valid==False){
-        printf("Please Eneter your movement 0-8");
+    while (valid == False) {
+        printf("\nPlease Eneter your movement 0-8");
 
 
-        res= (int)my_get_char();
-            if(is_position_empty(g,res)==True){
-                valid=True;
-            }
+        res = (int) my_get_char() - '0';
+        if (is_position_empty(g, res) == True) {
+            valid = True;
+        }
     }
     return res;
     //We call to is_position_empty to check that the index is a valid one.
 
     //5. We return res
-    return res;
+
 }
 
 //-------------------------------------------
@@ -293,27 +288,29 @@ int computer_get_movement_index(game *g) {
     int res = -1;
 
     //2. We create a boolean variable to control that we have received a valid movement index.
-    boolean valid=False;
+    boolean valid = False;
     //3. While we have not received a valid movement index.
 
     //If the machine is not intelligent we generate a random index to move for.
     //Otherwise we call to the function intelligent_selection to pick the best index to move for.
     //In both cases we call to is_position_empty to double check that the selected index is a valid one.
-    while(valid==False){
-        if(intelligent_selection(g)!=True)
-            res= gen_num(0,9);
+    while (valid == False) {
+        if (g->intelligent_machine == False)
 
+
+            res = gen_num(0, 9);
         else
-            res = intelligent_selection(g);
-        valid=True;
+            intelligent_selection(g);
 
-        if(is_position_empty(g,res)==False)
-            valid=False;
+
+        if (is_position_empty(g, res) == True)
+            valid = True;
+
 
     }
 
     //4. We display a message of pressing a key to continue
-    printf("Press a key to continue");
+    printf("\nPress a key to continue");
 
     //5. We call to my_get_char() to wait for the user to press a key before continuing.
     my_get_char();
@@ -329,6 +326,19 @@ int get_next_movement_index(game *g) {
     //1. We create the variable to be returned
     int res = -1;
 
+    if (g->status == 1) {
+        if (strcmp(g->p1, "Computer") != 0) {
+            res = user_get_movement_index(g);
+        } else
+            res = computer_get_movement_index(g);
+
+    } else if (g->status == 2) {
+        if (strcmp(g->p2, "Computer") != 0) {
+            res = user_get_movement_index(g);
+        } else
+            res = computer_get_movement_index(g);
+
+    }
     //2. We ask for the next valid movement to be selected.
     //Depending on the game status and the players name we call to the function
     //user_get_movement_index or computer_get_movement_index
@@ -336,6 +346,7 @@ int get_next_movement_index(game *g) {
     //3. We return res
     return res;
 }
+
 
 //------------------------------------
 //	10. FUNCTION is_there_a_winner
@@ -355,6 +366,103 @@ int is_there_a_winner(game *g) {
     //avenue 6 --> [0,4,8]
     //avenue 7 --> [2,4,6]
 
+    if ((*g).board[0][0] == 'X' && (*g).board[0][1] == 'X' && (*g).board[0][2] == 'X') {
+
+        res = 1;
+
+    }
+
+    if ((*g).board[1][0] == 'X' && (*g).board[1][1] == 'X' && (*g).board[1][2] == 'X') {
+
+        res = 1;
+
+    }
+
+    if ((*g).board[2][0] == 'X' && (*g).board[2][1] == 'X' && (*g).board[2][2] == 'X') {
+
+        res = 1;
+
+    }
+
+    if ((*g).board[0][0] == 'X' && (*g).board[1][0] == 'X' && (*g).board[2][0] == 'X') {
+
+        res = 1;
+
+    }
+
+    if ((*g).board[0][1] == 'X' && (*g).board[1][1] == 'X' && (*g).board[2][1] == 'X') {
+
+        res = 1;
+
+    }
+
+    if ((*g).board[0][2] == 'X' && (*g).board[1][2] == 'X' && (*g).board[2][2] == 'X') {
+
+        res = 1;
+
+    }
+
+    if ((*g).board[0][0] == 'X' && (*g).board[1][1] == 'X' && (*g).board[2][2] == 'X') {
+
+        res = 1;
+
+    }
+
+    if ((*g).board[2][0] == 'X' && (*g).board[1][1] == 'X' && (*g).board[0][2] == 'X') {
+
+        res = 1;
+
+    }
+
+    if ((*g).board[0][0] == 'O' && (*g).board[0][1] == 'O' && (*g).board[0][2] == 'O') {
+
+        res = 2;
+
+    }
+
+    if ((*g).board[1][0] == 'O' && (*g).board[1][1] == 'O' && (*g).board[1][2] == 'O') {
+
+        res = 2;
+
+    }
+
+    if ((*g).board[2][0] == 'O' && (*g).board[2][1] == 'O' && (*g).board[2][2] == 'O') {
+
+        res = 2;
+
+    }
+
+    if ((*g).board[0][0] == 'O' && (*g).board[1][0] == 'O' && (*g).board[2][0] == 'O') {
+
+        res = 2;
+
+    }
+
+    if ((*g).board[0][1] == 'O' && (*g).board[1][1] == 'O' && (*g).board[2][1] == 'O') {
+
+        res = 2;
+
+    }
+
+    if ((*g).board[0][2] == 'O' && (*g).board[1][2] == 'O' && (*g).board[2][2] == 'O') {
+
+        res = 2;
+
+    }
+
+    if ((*g).board[0][0] == 'O' && (*g).board[1][1] == 'O' && (*g).board[2][2] == 'O') {
+
+        res = 2;
+
+    }
+
+    if ((*g).board[2][0] == 'O' && (*g).board[1][1] == 'O' && (*g).board[0][2] == 'O') {
+
+        res = 2;
+
+    }
+
+
 
     //3. We return res
     return res;
@@ -370,6 +478,15 @@ boolean is_board_full(game *g) {
     //2. We check if the 9 positions of the board are busy.
     //If all positions are busy, we return True.
     //If at least one position is empty, we return False.
+    for (int i = 0; i < 3; ++i) {
+        for (int j = 0; j < 3; ++j) {
+
+            if (g->board[i][j] == ' ') {
+                res = False;
+            }
+        }
+
+    }
 
     //3. We return res
     return res;
@@ -381,22 +498,60 @@ boolean is_board_full(game *g) {
 void process_movement(game *g, int pos) {
     // 1. We update board with the new movement at index 'pos'.
     // This requires checking the current status to know if the movement is an 'X' or a 'O'.
+    int row = pos / 3;
+    int col = pos % 3;
+    char mark = ' ';
 
+    if (g->status == 1) {
+
+        g->board[row][col] = 'X';
+
+    } else if (g->status == 2) {
+
+        g->board[row][col] = 'O';
+    }
     //2. ---Computer Intelligent Movement Only ---
     //We traverse each avenue: If pos belongs to it, we call to update_avenue_states to update its state.
+    for (int i = 0; i < 8; ++i) {
+        for (int j = 0; j < 3; ++j) {
+            if (g->avenue_positions[i][j] == pos) {
+                update_avenue_states(g, i);
+            }
+
+        }
+
+    }
 
     //3. We create a variable winner and call to the function is_there_a_winner
     //to see if this movement has lead to a winner.
-
+    int winner;
+    winner = is_there_a_winner(g);
     //4. We create a variable winner and call to the function is_board_full to see if the board is full.
-
+    boolean fullboard;
+    fullboard = is_board_full(g);
     //5. We update the status accordingly.
     // (Case 1) winner == 1 --> Game Status = 3.
+    if (winner == 1) {
+        g->status = 3;
+    }
     // (Case 2) winner == 2 --> Game Status = 4.
+    if (winner == 2) {
+        g->status = 4;
+    }
     // (Case 3) winner == 0 and full == True --> Game Status = 5.
+    if ((winner == 0) && (fullboard == True)) {
+        g->status = 5;
+    }
     // (Case 4) winner == 0 and full == False --> Depending on current Game Status.
     //											  If Game Status == 1 --> Game Status = 2.
     //											  If Game Status == 2 --> Game Status = 1.
+    if ((winner == 0) && fullboard == False) {
+        if (g->status == 1) {
+            g->status = 2;
+        } else if (g->status == 2) {
+            g->status = 1;
+        }
+    }
 
 }
 
@@ -410,12 +565,18 @@ void play_game(char *p1, char *p2, int im) {
 
     //2. Game loop: While the game is on (i.e., Game Status = 1 or Game Status = 2)
     //2.1. We call to display_game_status to print the board content and the next player to move.
-    display_game_status(g);
+    while (g->status < 3) {
+        display_game_status(g);
+        int nm = get_next_movement_index(g);
+
+        process_movement(g, nm);
+
+    }
     //2.2. We call to get_next_movement_index to force the human player or the computer
     //to select a valid index to move for.
-    get_next_movement_index(g);
+
     //2.3. We call to process_movement to update the board content and the Game Status.
-    process_movement(g,im);
+
     //3. Once the game is over we call to display_game_status to print the last Game Status of the game.
     display_game_status(g);
 }
@@ -425,6 +586,9 @@ void play_game(char *p1, char *p2, int im) {
 //------------------------------------
 void update_avenue_states(game *g, int avenue) {
     // 1. We update the state
+
+
+
     // CASE State 1 --> We keep still at State 1.
 
     // CASE State 2 --> If Player1 is moving --> State 3.
@@ -445,6 +609,46 @@ void update_avenue_states(game *g, int avenue) {
     // CASE State 7 --> This case does not make sense, as the game is over.
 
     // CASE State 8 --> This case does not make sense, as the game is over.
+
+    switch (g->avenue_states[avenue]) {
+        case 2:
+            if (g->status == 1)
+                g->avenue_states[avenue] = 3;
+
+            else if (g->status == 2)
+                g->avenue_states[avenue] = 4;
+            break;
+
+        case 3:
+            if (g->status == 1)
+                g->avenue_states[avenue] = 5;
+
+            else if (g->status == 2)
+                g->avenue_states[avenue] = 1;
+            break;
+        case 4:
+            if (g->status == 1)
+                g->avenue_states[avenue] = 1;
+
+            else if (g->status == 2)
+                g->avenue_states[avenue] = 6;
+            break;
+
+        case 5:
+            if (g->status == 1)
+                g->avenue_states[avenue] = 7;
+
+            else if (g->status == 2)
+                g->avenue_states[avenue] = 1;
+            break;
+        case 6:
+            if (g->status == 1)
+                g->avenue_states[avenue] = 1;
+
+            else if (g->status == 2)
+                g->avenue_states[avenue] = 8;
+            break;
+    }
 
 }
 
