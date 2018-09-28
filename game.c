@@ -117,7 +117,7 @@ void display_board_content(game *g) {
         printf("|");
 
 
-        for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
             printf(" %d |", index);
 
 
@@ -327,15 +327,15 @@ int get_next_movement_index(game *g) {
     int res = -1;
 
     if (g->status == 1) {
-        if (strcmp(g->p1, "Computer") != 0) {
+        if (strcmp(g->p1, "Computer") != 0)
             res = user_get_movement_index(g);
-        } else
+        else
             res = computer_get_movement_index(g);
 
     } else if (g->status == 2) {
-        if (strcmp(g->p2, "Computer") != 0) {
+        if (strcmp(g->p2, "Computer") != 0)
             res = user_get_movement_index(g);
-        } else
+        else
             res = computer_get_movement_index(g);
 
     }
@@ -500,7 +500,6 @@ void process_movement(game *g, int pos) {
     // This requires checking the current status to know if the movement is an 'X' or a 'O'.
     int row = pos / 3;
     int col = pos % 3;
-    char mark = ' ';
 
     if (g->status == 1) {
 
@@ -582,7 +581,7 @@ void play_game(char *p1, char *p2, int im) {
 }
 
 //------------------------------------
-//	14. FUNCTION update_avenue_states 
+//	14. FUNCTION update_avenue_states
 //------------------------------------
 void update_avenue_states(game *g, int avenue) {
     // 1. We update the state
@@ -648,6 +647,8 @@ void update_avenue_states(game *g, int avenue) {
             else if (g->status == 2)
                 g->avenue_states[avenue] = 8;
             break;
+        default:
+            break;
     }
 
 }
@@ -688,13 +689,51 @@ int get_position_points(game *g, int pos) {
 
     // CASE State 8 --> This case does not make sense, as the game is over.
 
+    for (int i = 0; i < 8; ++i) {
+        for (int j = 0; j < 3; ++j) {
+            if (g->avenue_positions[i][j] == pos) {
+                switch (g->avenue_states[i]) {
+                    case 2:
+                        res = res + 1;
+                        break;
+                    case 3:
+                        if (g->status == 1)
+                            res = res + 4;
+                        else if (g->status == 2)
+                            res = res + 2;
+                        break;
+                    case 4:
+                        if (g->status == 1)
+                            res = res + 2;
+                        else if (g->status == 2)
+                            res = res + 4;
+                        break;
+                    case 5:
+                        if (g->status == 1)
+                            res = res + 16;
+                        else if (g->status == 2)
+                            res = res + 8;
+                        break;
+                    case 6:
+                        if (g->status == 1)
+                            res = res + 8;
+                        else if (g->status == 2)
+                            res = res + 16;
+                        break;
+                    default:
+                        break;
+                }
+            }
 
+        }
+
+    }
     //3. We return the accumulated amount of points of pos
     return res;
 }
 
 //----------------------------------------
-//	16. FUNCTION intelligent_selection 
+//	16. FUNCTION intelligent_selection
 //----------------------------------------
 int intelligent_selection(game *g) {
     //1. We create the variable to be returned
@@ -702,13 +741,13 @@ int intelligent_selection(game *g) {
 
     //2. We create an auxiliary variable max_points to compute the maximum amount of points we have found so far.
 
+
     //3. We traverse all the positions of boards to pick the one leading to maximum points.
     //If a position is not empty then we do not consider it.
     //If a position is empty, then we call to get_position_points to get its points.
     //We compare the result with max_points.
     //If the new position gets more points than max_points, then we update:
     //(1) The selected position and (2) The proper variable max_points with the new points computed.
-
 
     //4. We return res
     return res;
